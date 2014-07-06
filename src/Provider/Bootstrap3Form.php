@@ -41,9 +41,7 @@ class Bootstrap3Form extends Form
             'elements' => $this->bindContinue(),
         ]);
         $this->addElement('errors@' . self::NS, [
-            'errors' => $this->bind(function() {
-                return $this->getErrorMessages();
-            }),
+            'errors' => $this->bindErrorMessages(),
         ]);
     }
 }

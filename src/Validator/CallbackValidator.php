@@ -43,7 +43,7 @@ class CallbackValidator implements ValidatorInterface
         if (call_user_func($this->callable, $value)) {
             return true;
         }
-        $this->errorMessage = str_replace('%VALUE%', $value, $this->errorMessageTemplate);
+        $this->errorMessage = str_replace('%VALUE%', print_r($value, true), $this->errorMessageTemplate);
         return false;
     }
     

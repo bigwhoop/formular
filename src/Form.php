@@ -244,6 +244,17 @@ class Form
             return $this->render();
         });
     }
+    
+    
+    /**
+     * @return callable
+     */
+    public function bindErrorMessages()
+    {
+        return $this->bind(function() {
+            return $this->getErrorMessages();
+        });
+    }
 
 
     /**

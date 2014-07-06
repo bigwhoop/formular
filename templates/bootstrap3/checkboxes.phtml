@@ -4,7 +4,7 @@
         <?php foreach ((array)$this->options->val() as $value => $label): ?>
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" name="<?= $this->name->val(); ?>[]" id="<?= $this->id . '_' . $value; ?>" value="<?= $value; ?>" <?= $this->checked->prop(in_array($value, (array)$this->value->val())); ?>>
+                    <input type="checkbox" name="<?= $this->name; ?>[]" id="<?= $this->id . '_' . $value; ?>" value="<?= $value; ?>" <?= $this->checked->prop(in_array($value, (array)$this->value->val())); ?>>
                     <?= $label; ?>
                 </label>
             </div>
