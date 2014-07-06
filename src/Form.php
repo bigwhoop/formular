@@ -94,7 +94,7 @@ class Form
     public function clearElements()
     {
         $this->elements = [];
-        $this->renderQueue = null;
+        $this->resetRenderQueue();
         return $this;
     }
     
@@ -186,7 +186,7 @@ class Form
     {
         $this->validators = [];
         foreach ($validators as $scope => $validator) {
-            $this->addValidator($scope, $validator);
+            $this->setValidator($scope, $validator);
         }
         return $this;
     }
@@ -198,7 +198,7 @@ class Form
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function addValidator($scope, $validator)
+    public function setValidator($scope, $validator)
     {
         if (!is_string($scope)) {
             throw new \InvalidArgumentException("Scope must be string.");
@@ -254,6 +254,16 @@ class Form
         return $this->bind(function() {
             return $this->getErrorMessages();
         });
+    }
+
+
+    /**
+     * @return $this
+     */
+    public function resetRenderQueue()
+    {
+        $this->renderQueue = null;
+        return $this;
     }
 
 
