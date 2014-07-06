@@ -79,4 +79,33 @@ class ValueTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('checked', $value->prop(null, 'checked'));
         $this->assertSame('checked', $value->prop(false, 'checked'));
     }
+    
+    public function testOverloadingOfEmptyValue()
+    {
+        $value = new Value('key');
+        $this->assertEquals('', (string)$value);
+        $this->assertEquals(null, $value());
+        $this->assertEquals('foo', $value('foo'));
+    }
+    
+    public function testOverloading()
+    {
+        $arr = ['x' => 123, 'y' => [1,2,3]];
+        $value = new Value('key', $arr);
+        
+        $this->assertInternalType('string', (string)$value);
+        $this->assertEquals(print_r($arr, true), (string)$value);
+        
+        $this->assertInternalType('array', $value());
+        $this->assertEquals($arr, $value());
+        
+        $obj = (object)$arr;
+        $value = new Value('key', $obj);
+        
+        $this->assertInternalType('string', (string)$value);
+        $this->assertEquals(print_r($obj, true), (string)$value);
+        
+        $this->assertInternalType('object', $value());
+        $this->assertEquals($obj, $value());
+    }
 }

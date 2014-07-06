@@ -105,6 +105,16 @@ class Template
      */
     private function getValue($key)
     {
+        return $this->createValue($key, $this->dereferenceValue($key));
+    }
+
+
+    /**
+     * @param string $key
+     * @return mixed
+     */
+    private function dereferenceValue($key)
+    {
         $value = '';
         if (array_key_exists($key, $this->attributes)) {
             $value = $this->attributes[$key];
@@ -112,6 +122,17 @@ class Template
                 $value = $value();
             }
         }
+        return $value;
+    }
+    
+
+    /**
+     * @param string $key
+     * @param mixed $value
+     * @return Value
+     */
+    protected  function createValue($key, $value)
+    {
         return new Value($key, $value);
     }
 

@@ -80,6 +80,19 @@ class Value
      */
     public function __toString()
     {
-        return (string)$this->value;
+        if (is_scalar($this->value)) {
+            return (string)$this->value;
+        }
+        return print_r($this->value, true);
+    }
+
+
+    /**
+     * @param mixed $default
+     * @return mixed
+     */
+    public function __invoke($default = null)
+    {
+        return $this->val($default);
     }
 }
