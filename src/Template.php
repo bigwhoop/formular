@@ -14,9 +14,6 @@ namespace bigwhoop\Formular;
  */
 class Template
 {
-    /** @var Form */
-    private $form;
-    
     /** @var string */
     private $path = '';
     
@@ -25,18 +22,16 @@ class Template
 
 
     /**
-     * @param Form $form
      * @param string $path
      * @param array $attributes
      * @throws \InvalidArgumentException
      */
-    public function __construct(Form $form, $path, array $attributes)
+    public function __construct($path, array $attributes)
     {
         if (!is_readable($path)) {
             throw new \InvalidArgumentException("Template '$path' must be readable.");
         }
         
-        $this->form = $form;
         $this->path = $path;
         $this->attributes = $attributes;
     }
@@ -50,31 +45,6 @@ class Template
         ob_start();
         require $this->path;
         return ob_get_clean();
-    }
-
-
-    /**
-     * @return string
-     */
-    protected function elements()
-    {
-        return $this->form->render();
-    }
-
-
-    /**
-     * @param string $elementId
-     * @return string
-     * @throws \RuntimeException
-     */
-    public function element($elementId)
-    {
-        try {
-            $element = $this->form->getElementByID($elementId);
-            return $this->form->renderElement($element);
-        } catch (\OutOfBoundsException $e) {
-            throw new \RuntimeException("Failed to render partial '$elementId'. No such element exists on the form.");
-        }
     }
 
 

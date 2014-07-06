@@ -2,7 +2,8 @@
     <div class="col-sm-offset-2 col-sm-10">
         <div class="checkbox">
             <label <?= $this->id->attr(null, 'for'); ?>>
-                <input type="checkbox" <?= $this->attributes(['id', 'name', 'style']); ?> <?= $this->value->val('1'); ?>> <?= $this->label; ?>
+                <input type="checkbox" <?= $this->attributes(['id', 'name', 'style']); ?> <?= $this->value->attr('on'); ?> <?= $this->checked->prop(); ?>>
+                <?= $this->label; ?>
             </label>
         </div>
     </div>

@@ -1,0 +1,13 @@
+<div class="form-group">
+    <label <?= $this->id->attr(null, 'for'); ?> class="col-sm-2 control-label"><?= $this->label; ?></label>
+    <div class="col-sm-10">
+        <?php foreach ((array)$this->options->val() as $value => $label): ?>
+            <div class="radio">
+                <label>
+                    <input type="radio" <?= $this->name->attr(); ?> id="<?= $this->id . '_' . $value; ?>" value="<?= $value; ?>" <?= $this->checked->prop($value === $this->value->val()); ?>>
+                    <?= $label; ?>
+                </label>
+            </div>
+        <?php endforeach; ?>
+    </div>
+</div>

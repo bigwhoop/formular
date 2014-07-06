@@ -19,9 +19,6 @@ class Element
     
     /** @var array */
     private $attributes = [];
-    
-    /** @var bool */
-    private $isRendered = false;
 
 
     /**
@@ -74,7 +71,7 @@ class Element
     public function addAttributes(array $attributes)
     {
         foreach ($attributes as $key => $value) {
-            $this->addAttribute($key, $value);
+            $this->setAttribute($key, $value);
         }
         return $this;
     }
@@ -85,7 +82,7 @@ class Element
      * @param mixed $value
      * @return $this
      */
-    public function addAttribute($key, $value)
+    public function setAttribute($key, $value)
     {
         $keys = array_map('trim', explode(',', $key));
         foreach ($keys as $key) {
@@ -115,25 +112,5 @@ class Element
             return $this->attributes[$key];
         }
         return $defaultValue;
-    }
-
-
-    /**
-     * @return bool
-     */
-    public function isRendered()
-    {
-        return $this->isRendered;
-    }
-
-
-    /**
-     * @param bool $b
-     * @return $this
-     */
-    public function setIsRendered($b)
-    {
-        $this->isRendered = $b;
-        return $this;
     }
 }
