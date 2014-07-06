@@ -218,20 +218,36 @@ class Form
      * @param mixed|callable $value
      * @return callable
      */
-    public function bind($value)
+    public function bindValue($value)
     {
+        // Bind callable
         if (is_callable($value)) {
-            $callable = $value;
-        } elseif (is_array($value) && count($value) == 2 && is_object($value[0]) && is_string($value[1]) && property_exists($value[0], $value[1])) {
-            $callable = function() use ($value) {
+            return $value;
+        }
+        
+        // Bind object property
+        if (is_array($value) && count($value) == 2 && is_object($value[0]) && is_string($value[1]) && property_exists($value[0], $value[1])) {
+            return function() use ($value) {
                 return $value[0]->$value[1];
             };
-        } else {
-            $callable = function() use ($value) {
-                return $value;
-            };
         }
-        return $callable;
+        
+        // Bind everything else
+        return function() use ($value) {
+            return $value;
+        };
+    }
+
+
+    /**
+     * @param mixed $var
+     * @return callable
+     */
+    public function bindVariable(&$var)
+    {
+        return function() use (&$var) {
+            return $var;
+        };
     }
     
     
@@ -240,7 +256,7 @@ class Form
      */
     public function bindContinue()
     {
-        return $this->bind(function() {
+        return $this->bindValue(function() {
             return $this->render();
         });
     }
@@ -251,7 +267,7 @@ class Form
      */
     public function bindErrorMessages()
     {
-        return $this->bind(function() {
+        return $this->bindValue(function() {
             return $this->getErrorMessages();
         });
     }

@@ -21,21 +21,23 @@ class FormTest extends \PHPUnit_Framework_TestCase
     {
         $user = new User('John', 'Doe');
         $age = 21;
+        $location = 'Bern';
         
         $form = $this->createForm();
         $form->addElement('values-printer', [
-            'value1' => $form->bind([$user, 'getFirstName']),
-            'value2' => $form->bind([$user, 'lastName']),
-            'value3' => $form->bind(function() use (&$age) { return $age; }),
-            'value4' => '?',
+            'value1' => $form->bindValue([$user, 'getFirstName']),
+            'value2' => $form->bindValue([$user, 'lastName']),
+            'value3' => $form->bindValue(function() use (&$age) { return $age; }),
+            'value4' => $form->bindVariable($location),
         ]);
-        $this->assertSame('John-Doe-21-?', $form->render());
+        $this->assertSame('John-Doe-21-Bern', $form->render());
         
         $user->firstName = 'Jack';
         $user->lastName = 'Jones';
         $age = 34;
+        $location = 'Thun';
         $form->resetRenderQueue();
-        $this->assertSame('Jack-Jones-34-?', $form->render());
+        $this->assertSame('Jack-Jones-34-Thun', $form->render());
     }
     
     
