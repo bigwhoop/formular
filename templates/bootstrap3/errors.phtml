@@ -1,0 +1,12 @@
+<?php $errors = $this->errors->val(); ?>
+
+<?php if (count($errors) > 0): ?>
+    <div class="alert alert-danger">
+        <p>Please check the following fields:</p>
+        <ul>
+            <?php foreach ($errors as $error): ?>
+                <li><?= $error; ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+<?php endif; ?>
