@@ -293,12 +293,12 @@ class Form
             }
             
             $value = array_key_exists($elementId, $values) ? $values[$elementId] : null;
+            $element->setAttribute('value', $value);
             
             foreach ($this->validators as $scope => $validator) {
                 $elementIds = array_map('trim', explode(',', $scope));
                 
                 if ($scope === '*' || in_array($elementId, $elementIds)) {
-                    $element->setAttribute('value', $value);
                     if (!$validator->isValid($value)) {
                         $errors[] = $validator->getErrorMessage();
                     }

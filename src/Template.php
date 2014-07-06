@@ -26,7 +26,7 @@ class Template
      * @param array $attributes
      * @throws \InvalidArgumentException
      */
-    public function __construct($path, array $attributes)
+    public function __construct($path, array $attributes = [])
     {
         if (!is_readable($path)) {
             throw new \InvalidArgumentException("Template '$path' must be readable.");

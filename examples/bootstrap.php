@@ -12,9 +12,9 @@ $form->addElement('input', ['id,name' => 'last_name', 'label' => 'Last Name', 'p
 $form->addElement('input', ['id,name,type' => 'email', 'label' => 'E-Mail', 'placeholder' => 'Your e-mail address']);
 $form->addElement('input', ['id,name,type' => 'password', 'label' => 'Password']);
 $form->addElement('input', ['id,name' => 'password_confirmation', 'type' => 'password', 'label' => 'Password Confirmation']);
-$form->addElement('checkboxes', ['id,name' => 'interests', 'label' => 'Interests', 'values' => [0,1], 'options' => ['Sports', 'Technology', 'Nature', 'Politics']]);
+$form->addElement('checkboxes', ['id,name' => 'interests', 'label' => 'Interests', 'value' => [0,1], 'options' => ['Sports', 'Technology', 'Nature', 'Politics']]);
 $form->addElement('radios', ['id,name' => 'language', 'label' => 'Prefered Language', 'value' => 'en', 'options' => ['en' => 'English', 'de' => 'Deutsch', 'fr' => 'Français']]);
-$form->addElement('checkbox', ['id,name' => 'newsletter', 'label' => 'I want to get spammed by your newsletter', 'checked' => true]);
+$form->addElement('checkbox', ['id,name' => 'newsletter', 'label' => 'I want to get spammed by your newsletter', 'value' => true]);
 $form->addElement('checkbox', ['id,name' => 'accept_tos', 'label' => 'I accept the terms of service']);
 $form->addElement('submit', ['label' => 'Register']);
 
@@ -26,7 +26,7 @@ $form->setValidators([
     'password_confirmation' => new RespectValidationValidator('Password Confirmation', v::create()->notEmpty()->string()->length(6)),
     'accept_tos' => new CallbackValidator(function($value) {
         return !!$value;
-    }, 'You must accept the terms of service (%VALUE%)'),
+    }, 'You must accept the terms of service'),
 ]);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

@@ -104,8 +104,5 @@ class ValueTest extends \PHPUnit_Framework_TestCase
         
         $this->assertInternalType('string', (string)$value);
         $this->assertEquals(print_r($obj, true), (string)$value);
-        
-        $this->assertInternalType('object', $value());
-        $this->assertEquals($obj, $value());
     }
 }
