@@ -51,7 +51,7 @@ A light-weight, template-oriented form builder.
 
 So what is happening here?
 
-First we define create some `.php` files in a directory. This templates directory we then register with the form using
+First we create some `.php` files in a directory. This templates directory we then register with the form using
 `addTemplatesPath()`. The name of the files minus the extension are use as the template names. Next we define some
 elements using the available templates. When rendering the specified element attributes will get passed on to the
 templates.
@@ -105,6 +105,10 @@ such an object. It's default value will be `null`.
     
     // Same as above but uses 'bar' as a default value in case the current value is empty.
     <?= $this->foo->val('bar'); ?>   # '[VALUE]' or 'bar' if value is empty
+    
+    // Prints a string in the format of '[KEY]="[VALUE]"'. Prints an empty string if the value is empty.
+    <?= $this->foo->attr(); ?>       # 'foo="[VALUE]"' or '' if value is empty
+    <?= $this->foo->attr('bar'); ?>  # 'foo="[VALUE]"' or 'foo="bar"' if value is empty
     
     // Prints a string in the format of '[KEY]'. Prints an empty string if the value is empty.
     <?= $this->foo->prop(); ?>       # 'foo' or '' if value is empty
