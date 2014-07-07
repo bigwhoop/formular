@@ -37,7 +37,7 @@ A light-weight, template-oriented form builder.
     $form->addElement('submit', ['label' => 'Register']);
     echo $form->render();
     
-    ...
+Which outputs the following:
     
     <div class="row">
         <input type="text" id="name" name="name" placeholder="Your name" class="input input-large">
@@ -52,19 +52,28 @@ A light-weight, template-oriented form builder.
 So what is happening here?
 
 First we create some `.php` files in a directory. This templates directory we then register with the form using
-`addTemplatesPath()`. The name of the files minus the extension are use as the template names. Next we define some
-elements using the available templates. When rendering the specified element attributes will get passed on to the
+`addTemplatesPath()`. The name of the files minus the extension are used as the template's name. Next we define some
+elements using the available templates. When rendering the specified element, it's attributes will get passed on to the
 templates.
+
+### Conventions 
+
+Here are the conventions you need to know.
+
+* All elements are added to a queue.
+* This means that ...
+ * the elements are rendered in the same order they were added to the form.
+ * each element is only rendered once.
 
 
 ## Templates
 
 As learned in the first example, templates are `.php` files laying around in directories. You can add as many such
-directories to your form as you want.
+directories to your form as you wish.
 
 ### Template namespaces
 
-Look at the following example:
+Let's have a look at the following example:
 
     // ./templates1/input.php
     // ./templates2/input.php
@@ -93,7 +102,7 @@ You can also define a default namespace.
 
 ### Template values
 
-Inside templates you can access the element data use `$this->[KEY]`. This will provide access to a
+Inside templates you can access the element data using `$this->[KEY]`. This will provide access to a
 `Value` object with a set of little helpers to make things easier. Even if the attribute does not exist you'll get
 such an object. It's default value will be `null`.
 
@@ -114,21 +123,14 @@ such an object. It's default value will be `null`.
     <?= $this->foo->prop(); ?>       # 'foo' or '' if value is empty
     <?= $this->foo->prop(true); ?>   # 'foo'
     <?= $this->foo->prop(false); ?>  # 'foo' or '' if value is empty
-    
+
+
 ## Template providers
 
 Formular comes with support for **Bootstrap 3** forms. Just create a `new bigwhoop\Formular\Provider\Bootstrap3Form()`
-instead of a regular form and your ready to go. Have a look at `templates/bootstrap3` for all the available templates
+instead of a regular form and you're ready to go. Have a look at `templates/bootstrap3` for all the available templates
 and how to use them.
 
-## Conventions 
-
-Here are the conventions you need to know.
-
-* All elements are added to a queue.
-* This means that ...
- * the elements are rendered in the same order they were added to the form.
- * each element is only rendered once.
 
 ## Bindings
 
