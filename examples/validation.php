@@ -1,8 +1,8 @@
 <?php
 use bigwhoop\Formular\Form;
-use bigwhoop\Formular\Validator\RespectValidationValidator;
-use bigwhoop\Formular\Validator\CallbackValidator;
+use bigwhoop\Formular\Validation;
 use Respect\Validation\Validator as v;
+use Zend\Validator as ZF2;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -27,20 +27,28 @@ $form->setValidators([
     // in the order they were added. Then it moves on to the next element.
     
     // RespectValidationValidator enables you to easily integrate https://github.com/Respect/Validation 
-    'name' => new RespectValidationValidator('Name', v::create()->notEmpty()->string()->length(10, 20)),
-    'email' => new RespectValidationValidator('E-Mail', v::create()->notEmpty()->email()),
+    'name' => new Validation\Adapter\RespectValidationAdapter('Name', v::create()->notEmpty()->string()->length(10, 20)),
+    
+    // You can also Zend Framework 2 validators. Just pass in multiple validators to chain them up.
+    'email' => new Validation\Adapter\ZendFrameworkAdapter(
+        'E-Mail',
+        new ZF2\NotEmpty(),
+        new ZF2\EmailAddress()
+        // new \ZF2...
+        // ...
+    ),
     
     // CallbackValidator enables you to easily integrate custom validators. The 2nd argument is a error message
     // which can contain a %VALUE% term that gets replaced with the user input upon failed validation.
-    'captcha' => new CallbackValidator(function($value) use ($captchaValue) {
+    'captcha' => new Validation\CallbackValidator(function($value) use ($captchaValue) {
         return $value === $captchaValue;
     }, "The correct captcha value would have been '$captchaValue', not '%VALUE%'."),
     
     // You can assign validators to multiple elements.
-    'name,email' => new CallbackValidator(function() { return true; }, "I'm invisible!"), 
+    'name,email' => new Validation\CallbackValidator(function() { return true; }, "I'm invisible!"), 
     
     // Or even match all elements.
-    '*' => new CallbackValidator(function() { return false; }, "I don't like '%VALUE%' ..."),
+    '*' => new Validation\CallbackValidator(function() { return false; }, "I don't like '%VALUE%' ..."),
 ]);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {

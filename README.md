@@ -2,6 +2,7 @@
 
 A light-weight, template-oriented form builder.
 
+
 ## Features
 
 * Build custom forms using re-usable templates
@@ -9,11 +10,13 @@ A light-weight, template-oriented form builder.
 * Non-intrusive validation support. Take your 3rd party library and plug it in.
 * Fully tested. 
 
+
 ## Terminology
 
 * **Template**: A view script written in PHP and HTML.
 * **Template Value**: A value inside a template, most likely coming from an element definition.
 * **Element**: A part of the form that is rendered using a specific template.
+
 
 ## A simple example
 
@@ -163,7 +166,8 @@ If you use the continue binding, ...
 
 ### Error messages binding
 
-The error messages binding allows for easy access to the error messages that occurred during validation.
+The error messages binding allows for easy access to the error messages that occurred during validation. See the
+validation chapter for more information on how to set up validators.
 
     <ul><?php foreach ((array)$this->messages->val() as $error): ?><li><?= $error; ?></li><?php endforeach; ?></ul>
     ...
@@ -194,6 +198,12 @@ Using `$form->bindVariable()` it's also possible to bind to a variable.
     ]);
     $var = 'James';
     $form->render(); // => <h1>James</h1>
+
+
+## Validation
+
+Adapters.
+
 
 ## License
 

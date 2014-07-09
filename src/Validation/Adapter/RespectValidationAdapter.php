@@ -7,14 +7,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace bigwhoop\Formular\Validator;
+namespace bigwhoop\Formular\Validation\Adapter;
+use bigwhoop\Formular\Validation\ValidatorInterface;
 use Respect\Validation\Validator as RespectValidator;
 use Respect\Validation\Exceptions\ValidationException;;
 
 /**
  * @author Philippe Gerber <philippe@bigwhoop.ch>
  */
-class RespectValidationValidator implements ValidatorInterface
+class RespectValidationAdapter implements ValidatorInterface
 {
     /** @var string */
     private $label;
@@ -43,7 +44,9 @@ class RespectValidationValidator implements ValidatorInterface
     public function isValid($value)
     {
         try {
-            return $this->validator->check($value);
+            $this->validator->check($value);
+            $this->errorMessage = '';
+            return true;
         } catch (ValidationException $e) {
             $this->errorMessage = (empty($this->label) ? '' : "{$this->label}: ") . $e->getMessage();
             return false;

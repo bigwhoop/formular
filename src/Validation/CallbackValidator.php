@@ -7,7 +7,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace bigwhoop\Formular\Validator;
+namespace bigwhoop\Formular\Validation;
 
 /**
  * @author Philippe Gerber <philippe@bigwhoop.ch>
@@ -41,6 +41,7 @@ class CallbackValidator implements ValidatorInterface
     public function isValid($value)
     {
         if (call_user_func($this->callable, $value)) {
+            $this->errorMessage = '';
             return true;
         }
         $this->errorMessage = str_replace('%VALUE%', print_r($value, true), $this->errorMessageTemplate);
