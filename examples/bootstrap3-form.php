@@ -1,10 +1,15 @@
 <?php
 use bigwhoop\Formular\Provider\Bootstrap3Form;
-use bigwhoop\Formular\Validator\CallbackValidator;
+use bigwhoop\Formular\Validation\CallbackValidator;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-$form = new Bootstrap3Form();
+$form = new Bootstrap3Form([
+    'orientation'    => Bootstrap3Form::ORIENTATION_HORIZONTAL,
+    'form_element'   => ['class' => 'my-form'],
+    'errors_element' => ['class' => 'my-errors'],
+]);
+
 $form->addElement('input', ['id,name' => 'first_name', 'label' => 'First Name', 'placeholder' => 'Your first name']);
 $form->addElement('input', ['id,name' => 'last_name', 'label' => 'Last Name', 'placeholder' => 'Your last name']);
 $form->addElement('input', ['id,name,type' => 'email', 'label' => 'E-Mail', 'placeholder' => 'Your e-mail address']);
