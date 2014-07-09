@@ -15,6 +15,71 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $form->addTemplatesPath(__DIR__ . '/../data/templates');
         return $form;
     }
+
+
+    /**
+     * @expectedException \OverflowException
+     * @expectedExceptionMessage Can't import template 'dirname' from
+     */
+    public function testNamespaceCollision()
+    {
+        $form = new Form();
+        $form->addTemplatesPath(__DIR__ . '/../data/templates')
+             ->addTemplatesPath(__DIR__ . '/../data/templates2')
+             ->addElement('dirname')
+             ->render();
+    }
+    
+    
+    public function testNamespace()
+    {
+        $form = new Form();
+        $form->addTemplatesPath(__DIR__ . '/../data/templates')
+             ->addTemplatesPath(__DIR__ . '/../data/templates2', 't2')
+             ->addElement('dirname')
+             ->addElement('dirname@t2');
+        
+        $this->assertSame('templatestemplates2', $form->render());
+    }
+    
+    
+    public function testDefaultNamespace()
+    {
+        $form = new Form();
+        $form->addTemplatesPath(__DIR__ . '/../data/templates')
+             ->addTemplatesPath(__DIR__ . '/../data/templates2', 't2')
+             ->setDefaultNamespace('t2')
+             ->addElement('dirname')
+             ->addElement('dirname');
+        
+        $this->assertSame('templates2templates2', $form->render());
+    }
+
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage A template by the name 'dirname' does not exist.
+     */
+    public function testUnresolvableMultipleNamespaces()
+    {
+        $form = new Form();
+        $form->addTemplatesPath(__DIR__ . '/../data/templates', 't1')
+             ->addTemplatesPath(__DIR__ . '/../data/templates2', 't2')
+             ->addElement('dirname')
+             ->render();
+    }
+
+    
+    public function testMultipleNamespaces()
+    {
+        $form = new Form();
+        $form->addTemplatesPath(__DIR__ . '/../data/templates', 't1')
+             ->addTemplatesPath(__DIR__ . '/../data/templates2', 't2')
+             ->addElement('dirname@t2')
+             ->addElement('dirname@t1');
+        
+        $this->assertSame('templates2templates', $form->render());
+    }
     
     
     public function testValueBinding()
