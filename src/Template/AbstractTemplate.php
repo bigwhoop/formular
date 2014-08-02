@@ -9,19 +9,16 @@
  */
 namespace bigwhoop\Formular\Template;
 
-use bigwhoop\Formular\Template\Factory\TemplateFactoryInterface;
+use bigwhoop\Formular\TemplateFactory\TemplateFactoryInterface;
 use Zend\Escaper\Escaper;
 
 /**
  * @author Philippe Gerber <philippe@bigwhoop.ch>
  */
-class Template
+abstract class AbstractTemplate
 {
-    /** @var string */
-    private $path = '';
-    
     /** @var array */
-    private $attributes = [];
+    protected $attributes = [];
     
     /** @var TemplateFactoryInterface|null */
     private $templateFactory = null;
@@ -31,18 +28,13 @@ class Template
 
 
     /**
-     * @param string $path
      * @param array $attributes
-     * @throws \InvalidArgumentException
+     * @return $this
      */
-    public function __construct($path, array $attributes = [])
+    public function setAttributes(array $attributes)
     {
-        if (!is_readable($path)) {
-            throw new \InvalidArgumentException("Template '$path' must be readable.");
-        }
-        
-        $this->path = $path;
         $this->attributes = $attributes;
+        return $this;
     }
 
 
@@ -81,14 +73,20 @@ class Template
 
 
     /**
+     * @param array $attributes
      * @return string
      */
-    public function render()
+    public function render(array $attributes = [])
     {
-        ob_start();
-        require $this->path;
-        return ob_get_clean();
+        $this->setAttributes($attributes);
+        return $this->renderTemplate();
     }
+
+
+    /**
+     * @return string
+     */
+    abstract protected function renderTemplate();
 
 
     /**
@@ -147,7 +145,8 @@ class Template
         if (!$this->templateFactory) {
             throw new \RuntimeException("Template factory must be set to render partials.");
         }
-        return $this->templateFactory->createTemplate($templateName, $this->attributes)->render();
+        $template = $this->templateFactory->createTemplate($templateName);
+        return $template->render($this->attributes);
     }
 
 
@@ -183,7 +182,7 @@ class Template
      * @param mixed $value
      * @return Value
      */
-    protected  function createValue($key, $value)
+    private function createValue($key, $value)
     {
         $val = new Value($key, $value);
         $val->setEscaper($this->getEscaper());

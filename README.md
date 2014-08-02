@@ -5,9 +5,9 @@ A light-weight, template-oriented form builder.
 
 ## Features
 
-* Build custom forms using re-usable templates
+* Build custom forms using re-usable templates (Bootstrap, ...).
 * Write PHP templates. No need to learn a new syntax.
-* Non-intrusive validation support. Take your 3rd party library and plug it in.
+* Non-intrusive filtering and validation support. Take your 3rd party library and plug it in using the available adapters.
 * Fully tested. 
 
 
@@ -32,7 +32,7 @@ A light-weight, template-oriented form builder.
     
     // ./src/form.php
     use bigwhoop\Formular\Form;
-    use bigwhoop\Formular\Template\Factory\FileBasedFactory;
+    use bigwhoop\Formular\TemplateFactory\FileBasedFactory;
     
     $templateFactory = new FileBasedFactory();
     $templateFactory->addTemplatesPath(__DIR__ . '/templates');
@@ -138,6 +138,23 @@ such an object. It's default value will be `null`.
     <?= $this->foo->prop(true); ?>              # 'foo'/[KEY]
     <?= $this->foo->prop(false); ?>             # 'foo'/[KEY] or '' if value is empty
 
+
+## Template helpers
+
+Inside templates you can also use some helper methods using `$this->[HELPER]()`.
+
+    // Pass the current element data to a different template
+    <?= $this->partial('template@ns'); ?>
+    
+    // Render multiple attributes at once
+    <?= $this->attr(['id', 'name']); ?>
+    ... same as ...
+    <?= $this->id->attr(); ?> <?= $this->name->attr(); ?>
+    
+    // Render multiple properties at once
+    <?= $this->prop(['id', 'name']); ?>
+    ... same as ...
+    <?= $this->id->prop(); ?> <?= $this->name->prop(); ?>
 
 ## Template providers
 

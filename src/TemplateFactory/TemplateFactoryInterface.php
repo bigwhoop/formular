@@ -7,9 +7,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace bigwhoop\Formular\Template\Factory;
+namespace bigwhoop\Formular\TemplateFactory;
 
-use bigwhoop\Formular\Template\Template;
+use bigwhoop\Formular\Template\AbstractTemplate;
 
 /**
  * @author Philippe Gerber <philippe@bigwhoop.ch>
@@ -24,8 +24,7 @@ interface TemplateFactoryInterface
     
     /**
      * @param string $name
-     * @param array $attributes
-     * @return Template
+     * @return AbstractTemplate
      */
-    public function createTemplate($name, array $attributes = []);
+    public function createTemplate($name);
 }

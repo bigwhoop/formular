@@ -1,6 +1,6 @@
 <?php
 namespace Test\Formular;
-use bigwhoop\Formular\Template\Factory\FileBasedFactory;
+use bigwhoop\Formular\TemplateFactory\FileBasedFactory;
 use bigwhoop\Formular\Validation\CallbackValidator;
 use Test\Models\User;
 use bigwhoop\Formular\Form;

@@ -7,8 +7,8 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace bigwhoop\Formular\Template\Factory;
-use bigwhoop\Formular\Template\Template;
+namespace bigwhoop\Formular\TemplateFactory;
+use bigwhoop\Formular\Template\FileTemplate;
 
 /**
  * @author Philippe Gerber <philippe@bigwhoop.ch>
@@ -50,10 +50,10 @@ class FileBasedFactory implements TemplateFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function createTemplate($name, array $attributes = [])
+    public function createTemplate($name)
     {
         $templatePath = $this->getTemplatePath($name);
-        $template = new Template($templatePath, $attributes);
+        $template = new FileTemplate($templatePath);
         $template->setTemplateFactory($this);
         return $template;
     }

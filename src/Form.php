@@ -10,7 +10,7 @@
 namespace bigwhoop\Formular;
 use bigwhoop\Formular\Filter\CallbackFilter;
 use bigwhoop\Formular\Filter\FilterInterface;
-use bigwhoop\Formular\Template\Factory\TemplateFactoryInterface;
+use bigwhoop\Formular\TemplateFactory\TemplateFactoryInterface;
 use bigwhoop\Formular\Validation\CallbackValidator;
 use bigwhoop\Formular\Validation\ValidatorInterface;
 
@@ -318,7 +318,8 @@ class Form
         if (!$factory) {
             throw new \LogicException("A template factory must be set to render an element.");
         }
-        return $factory->createTemplate($element->getTemplate(), $element->getAttributes())->render();
+        $template = $factory->createTemplate($element->getTemplate());
+        return $template->render($element->getAttributes());
     }
 
 

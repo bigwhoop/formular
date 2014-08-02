@@ -9,7 +9,7 @@
  */
 namespace bigwhoop\Formular\Provider;
 use bigwhoop\Formular\Form;
-use bigwhoop\Formular\Template\Factory\FileBasedFactory;
+use bigwhoop\Formular\TemplateFactory\FileBasedFactory;
 
 /**
  * @author Philippe Gerber <philippe@bigwhoop.ch>

@@ -1,6 +1,6 @@
 <?php
 use bigwhoop\Formular\Form;
-use bigwhoop\Formular\Template\Factory\FileBasedFactory;
+use bigwhoop\Formular\TemplateFactory\FileBasedFactory;
 use bigwhoop\Formular\Validation;
 use Respect\Validation\Validator as v;
 use Zend\Validator as ZF2;
@@ -15,7 +15,7 @@ $form->setTemplateFactory($templateFactory);
 
 $form->addElement('form', [
     'elements' => $form->bindContinue(),
-    'errors' => $form->bindErrorMessages(),
+    'errors'   => $form->bindErrorMessages(),
 ]);
 
 $form->addElement('input', ['id,name' => 'name', 'label' => 'Your Name']);
