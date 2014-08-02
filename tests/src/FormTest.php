@@ -1,5 +1,6 @@
 <?php
 namespace Test\Formular;
+use bigwhoop\Formular\Template\Factory\FileBasedFactory;
 use bigwhoop\Formular\Validation\CallbackValidator;
 use Test\Models\User;
 use bigwhoop\Formular\Form;
@@ -11,8 +12,12 @@ class FormTest extends \PHPUnit_Framework_TestCase
      */
     private function createForm()
     {
+        $templates = new FileBasedFactory();
+        $templates->addTemplatesPath(__DIR__ . '/../data/templates');
+        
         $form = new Form();
-        $form->addTemplatesPath(__DIR__ . '/../data/templates');
+        $form->setTemplateFactory($templates);
+        
         return $form;
     }
 
@@ -23,9 +28,12 @@ class FormTest extends \PHPUnit_Framework_TestCase
      */
     public function testNamespaceCollision()
     {
+        $templates = new FileBasedFactory();
+        $templates->addTemplatesPath(__DIR__ . '/../data/templates')
+                  ->addTemplatesPath(__DIR__ . '/../data/templates2');
+        
         $form = new Form();
-        $form->addTemplatesPath(__DIR__ . '/../data/templates')
-             ->addTemplatesPath(__DIR__ . '/../data/templates2')
+        $form->setTemplateFactory($templates)
              ->addElement('dirname')
              ->render();
     }
@@ -33,9 +41,12 @@ class FormTest extends \PHPUnit_Framework_TestCase
     
     public function testNamespace()
     {
+        $templates = new FileBasedFactory();
+        $templates->addTemplatesPath(__DIR__ . '/../data/templates')
+                  ->addTemplatesPath(__DIR__ . '/../data/templates2', 't2');
+        
         $form = new Form();
-        $form->addTemplatesPath(__DIR__ . '/../data/templates')
-             ->addTemplatesPath(__DIR__ . '/../data/templates2', 't2')
+        $form->setTemplateFactory($templates)
              ->addElement('dirname')
              ->addElement('dirname@t2');
         
@@ -45,10 +56,13 @@ class FormTest extends \PHPUnit_Framework_TestCase
     
     public function testDefaultNamespace()
     {
+        $templates = new FileBasedFactory();
+        $templates->addTemplatesPath(__DIR__ . '/../data/templates')
+                  ->addTemplatesPath(__DIR__ . '/../data/templates2', 't2')
+                  ->setDefaultNamespace('t2');
+        
         $form = new Form();
-        $form->addTemplatesPath(__DIR__ . '/../data/templates')
-             ->addTemplatesPath(__DIR__ . '/../data/templates2', 't2')
-             ->setDefaultNamespace('t2')
+        $form->setTemplateFactory($templates)
              ->addElement('dirname')
              ->addElement('dirname');
         
@@ -62,9 +76,12 @@ class FormTest extends \PHPUnit_Framework_TestCase
      */
     public function testUnresolvableMultipleNamespaces()
     {
+        $templates = new FileBasedFactory();
+        $templates->addTemplatesPath(__DIR__ . '/../data/templates', 't1')
+                  ->addTemplatesPath(__DIR__ . '/../data/templates2', 't2');
+        
         $form = new Form();
-        $form->addTemplatesPath(__DIR__ . '/../data/templates', 't1')
-             ->addTemplatesPath(__DIR__ . '/../data/templates2', 't2')
+        $form->setTemplateFactory($templates)
              ->addElement('dirname')
              ->render();
     }
@@ -72,9 +89,12 @@ class FormTest extends \PHPUnit_Framework_TestCase
     
     public function testMultipleNamespaces()
     {
+        $templates = new FileBasedFactory();
+        $templates->addTemplatesPath(__DIR__ . '/../data/templates', 't1')
+                  ->addTemplatesPath(__DIR__ . '/../data/templates2', 't2');
+        
         $form = new Form();
-        $form->addTemplatesPath(__DIR__ . '/../data/templates', 't1')
-             ->addTemplatesPath(__DIR__ . '/../data/templates2', 't2')
+        $form->setTemplateFactory($templates)
              ->addElement('dirname@t2')
              ->addElement('dirname@t1');
         

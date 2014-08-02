@@ -11,6 +11,7 @@ namespace bigwhoop\Formular\Validation\Adapter;
 use bigwhoop\Formular\Validation\ValidatorInterface;
 use Zend\Validator\ValidatorInterface as Validator;
 use Zend\Validator\ValidatorChain;
+use Zend\Validator\NotEmpty;
 
 /**
  * @author Philippe Gerber <philippe@bigwhoop.ch>
@@ -25,6 +26,9 @@ class ZendFrameworkAdapter implements ValidatorInterface
     
     /** @var string */
     private $errorMessage = '';
+    
+    /** @var bool */
+    private $allowEmpty = true;
 
 
     /**
@@ -39,6 +43,9 @@ class ZendFrameworkAdapter implements ValidatorInterface
         
         $validatorChain = new ValidatorChain();
         foreach (array_slice(func_get_args(), 1) as $validator) {
+            if ($validator instanceof NotEmpty) {
+                $this->allowEmpty = false;
+            }
             $validatorChain->attach($validator, true);
         }
         $this->validator = $validatorChain;
@@ -50,7 +57,7 @@ class ZendFrameworkAdapter implements ValidatorInterface
      */
     public function isValid($value)
     {
-        if ($this->validator->isValid($value)) {
+        if (($this->allowEmpty && empty($value)) || $this->validator->isValid($value)) {
             $this->errorMessage = '';
             return true;
         }

@@ -1,6 +1,6 @@
 <?php
 namespace Test\Formular;
-use bigwhoop\Formular\Value;
+use bigwhoop\Formular\Template\Value;
 
 class ValueTest extends \PHPUnit_Framework_TestCase
 {

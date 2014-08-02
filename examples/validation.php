@@ -1,13 +1,17 @@
 <?php
 use bigwhoop\Formular\Form;
+use bigwhoop\Formular\Template\Factory\FileBasedFactory;
 use bigwhoop\Formular\Validation;
 use Respect\Validation\Validator as v;
 use Zend\Validator as ZF2;
 
 require __DIR__ . '/../vendor/autoload.php';
 
+$templateFactory = new FileBasedFactory();
+$templateFactory->addTemplatesPath(__DIR__ . '/templates');
+
 $form = new Form();
-$form->addTemplatesPath(__DIR__ . '/templates');
+$form->setTemplateFactory($templateFactory);
 
 $form->addElement('form', [
     'elements' => $form->bindContinue(),

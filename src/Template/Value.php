@@ -7,7 +7,9 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace bigwhoop\Formular;
+namespace bigwhoop\Formular\Template;
+
+use Zend\Escaper\Escaper;
 
 /**
  * @author Philippe Gerber <philippe@bigwhoop.ch>
@@ -19,6 +21,9 @@ class Value
     
     /** @var mixed */
     private $value = null;
+    
+    /** @var Escaper|null */
+    private $escaper = null;
 
 
     /**
@@ -29,6 +34,17 @@ class Value
     {
         $this->key   = $key;
         $this->value = $value;
+    }
+
+
+    /**
+     * @param Escaper $escaper
+     * @return $this
+     */
+    public function setEscaper(Escaper $escaper)
+    {
+        $this->escaper = $escaper;
+        return $this;
     }
     
     
@@ -43,6 +59,39 @@ class Value
         }
         return $this->value;
     }
+
+
+    /**
+     * Returns val() as an escaped string that can be used inside HTML tags.
+     * 
+     * @param mixed $default
+     * @param bool $escape
+     * @return string
+     */
+    public function str($default = null, $escape = true)
+    {
+        $val = $this->val($default);
+        if (is_scalar($val)) {
+            $val = (string)$val;
+        } else {
+            $val = print_r($this->value, true);
+        }
+        return $escape && $this->escaper ? $this->escaper->escapeHtml($val) : $val;
+    }
+
+
+    /**
+     * Returns val() as an escaped string that can be used inside HTML element attributes.
+     * 
+     * @param mixed $default
+     * @param bool $escape
+     * @return string
+     */
+    public function attrVal($default = null, $escape = true)
+    {
+        $val = $this->str($default, false);
+        return $escape && $this->escaper ? $this->escaper->escapeHtmlAttr($val) : $val;
+    }
     
 
     /**
@@ -52,7 +101,7 @@ class Value
      */
     public function attr($default = null, $key = null)
     {
-        $value = $this->val($default);
+        $value = $this->attrVal($default);
         if (empty($value)) {
             return '';
         }
@@ -80,10 +129,7 @@ class Value
      */
     public function __toString()
     {
-        if (is_scalar($this->value)) {
-            return (string)$this->value;
-        }
-        return print_r($this->value, true);
+        return $this->str();
     }
 
 

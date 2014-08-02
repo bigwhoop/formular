@@ -1,6 +1,10 @@
-<div class="form-group">
-    <label <?= $this->id->attr(null, 'for'); ?> class="col-sm-2 control-label"><?= $this->label; ?></label>
-    <div class="col-sm-10">
-        <input type="<?= $this->type->val('text'); ?>" class="form-control <?= $this->class; ?>" <?= $this->attributes(['id', 'name', 'style', 'placeholder', 'value']); ?>>
+<?php if ($this->type == 'hidden'): ?>
+    <?= $this->partial('input_hidden@base'); ?>
+<?php else: ?>
+    <div class="form-group">
+        <label <?= $this->id->attr(null, 'for'); ?> class="col-sm-2 control-label <?= $this->required->val() ? 'required' : ''; ?>"><?= $this->label; ?></label>
+        <div class="col-sm-10">
+            <?= $this->partial('input@base'); ?>
+        </div>
     </div>
-</div>
+<?php endif; ?>

@@ -10,6 +10,7 @@
 namespace bigwhoop\Formular;
 use bigwhoop\Formular\Filter\CallbackFilter;
 use bigwhoop\Formular\Filter\FilterInterface;
+use bigwhoop\Formular\Template\Factory\TemplateFactoryInterface;
 use bigwhoop\Formular\Validation\CallbackValidator;
 use bigwhoop\Formular\Validation\ValidatorInterface;
 
@@ -30,14 +31,8 @@ class Form
     /** @var \SplQueue|null */
     private $renderQueue = null;
     
-    /** @var array */
-    private $templatesPaths = [];
-    
-    /** @var array */
-    private $templatesMap = [];
-    
-    /** @var null|string */
-    private $defaultNamespace = null;
+    /** @var TemplateFactoryInterface|null */
+    private $templateFactory = null;
 
     /** @var FilterInterface[] */
     private $filters = [];
@@ -76,15 +71,24 @@ class Form
         // ...
     }
 
-    
+
     /**
-     * @param string|null $namespace
+     * @param TemplateFactoryInterface $locator
      * @return $this
      */
-    public function setDefaultNamespace($namespace)
+    public function setTemplateFactory(TemplateFactoryInterface $locator)
     {
-        $this->defaultNamespace = $namespace;
+        $this->templateFactory = $locator;
         return $this;
+    }
+
+
+    /**
+     * @return TemplateFactoryInterface|null
+     */
+    public function getTemplateFactory()
+    {
+        return $this->templateFactory;
     }
 
 
@@ -131,14 +135,13 @@ class Form
 
 
     /**
-     * @param string $path
-     * @param string|null $namespace
-     * @return $this
+     * @param string $id
+     * @param mixed $default
+     * @return mixed
      */
-    public function addTemplatesPath($path, $namespace = null)
+    public function getElementValueByID($id, $default = null)
     {
-        $this->templatesPaths[$path] = $namespace;
-        return $this;
+        return $this->getElementByID($id)->getAttribute('value', $default);
     }
 
 
@@ -307,12 +310,15 @@ class Form
     /**
      * @param Element $element
      * @return string
+     * @throws \LogicException
      */
     public function renderElement(Element $element)
     {
-        $templatePath = $this->getTemplatePath($element->getTemplate());
-        $template = new Template($templatePath, $element->getAttributes());
-        return $template->render();
+        $factory = $this->getTemplateFactory();
+        if (!$factory) {
+            throw new \LogicException("A template factory must be set to render an element.");
+        }
+        return $factory->createTemplate($element->getTemplate(), $element->getAttributes())->render();
     }
 
 
@@ -355,62 +361,5 @@ class Form
     public function getErrorMessages()
     {
         return $this->errorMessages;
-    }
-    
-
-    /**
-     * Builds a map of template names to paths.
-     * 
-     * @return array
-     * @throws \OverflowException|\RuntimeException
-     */
-    private function buildTemplatesMap()
-    {
-        if (!empty($this->templatesMap)) {
-            return $this->templatesMap;
-        }
-        
-        $this->templatesMap = [];
-        foreach ($this->templatesPaths as $templatesPath => $templatesNamespace) {
-            if (!is_readable($templatesPath)) {
-                throw new \RuntimeException("Templates path '$templatesPath' does not exist or is not readable.");
-            }
-            
-            foreach (glob($templatesPath . '/*.phtml') as $templatePath) {
-                $template = pathinfo($templatePath, PATHINFO_FILENAME);
-                if ($templatesNamespace !== null) {
-                    $template .= '@' . $templatesNamespace;
-                }
-                if (array_key_exists($template, $this->templatesMap)) {
-                    throw new \OverflowException("Can't import template '$template' from '$templatePath' as a template with the same name already exists at '{$this->templatesMap[$template]}'. You may want to use namespaces.");
-                }
-                $this->templatesMap[$template] = $templatePath;
-            }
-        }
-        return $this->templatesMap;
-    }
-    
-
-    /**
-     * Returns the path to a given template.
-     * 
-     * The template name can contain a namespace like "template@ns" in case there are templates with the same name.
-     * 
-     * @param string $template
-     * @return string
-     * @throws \RuntimeException
-     */
-    private function getTemplatePath($template)
-    {
-        if (strpos($template, '@') === false && !empty($this->defaultNamespace)) {
-            $template .= '@' . $this->defaultNamespace;
-        }
-        
-        $map = $this->buildTemplatesMap();
-        
-        if (!array_key_exists($template, $map)) {
-            throw new \RuntimeException("A template by the name '$template' does not exist. The following templates are available: " . join(', ', array_keys($map)));
-        }
-        return $map[$template];
     }
 }

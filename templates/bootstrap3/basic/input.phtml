@@ -1,4 +1,8 @@
-<div class="form-group">
-    <label <?= $this->id->attr(null, 'for'); ?>><?= $this->label; ?></label>
-    <input type="<?= $this->type->val('text'); ?>" class="form-control <?= $this->class; ?>" <?= $this->attributes(['id', 'name', 'style', 'placeholder', 'value']); ?>>
-</div>
+<?php if ($this->type == 'hidden'): ?>
+    <?= $this->partial('input_hidden@base'); ?>
+<?php else: ?>
+    <div class="form-group">
+        <label <?= $this->id->attr(null, 'for'); ?>><?= $this->label; ?></label>
+        <?= $this->partial('input@base'); ?>
+    </div>
+<?php endif; ?>
