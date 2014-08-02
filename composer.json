@@ -24,5 +24,6 @@
     "psr-4": {
       "bigwhoop\\Formular\\": "src/"
     }
-  }
+  },
+  "minimum-stability": "stable"
 }
