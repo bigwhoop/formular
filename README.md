@@ -156,11 +156,15 @@ Inside templates you can also use some helper methods using `$this->[HELPER]()`.
     ... same as ...
     <?= $this->id->prop(); ?> <?= $this->name->prop(); ?>
 
-## Template providers
+## Providers
 
-Formular comes with support for **Bootstrap 3** forms. Just create a `new bigwhoop\Formular\Provider\Bootstrap3Form()`
-instead of a regular form and you're ready to go. Have a look at `templates/bootstrap3` for all the available templates
-and how to use them.
+The following forms/templates have been created so far:
+
+* [Bootstrap 3](https://github.com/bigwhoop/formular-form-bootstrap3)
+
+Other packages:
+
+* [Laravel integration](https://github.com/bigwhoop/formular-provider-laravel)
 
 
 ## Bindings

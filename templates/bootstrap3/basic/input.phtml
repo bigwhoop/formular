@@ -1,8 +1,0 @@
-<?php if ($this->type == 'hidden'): ?>
-    <?= $this->partial('input_hidden@base'); ?>
-<?php else: ?>
-    <div class="form-group">
-        <label <?= $this->id->attr(null, 'for'); ?>><?= $this->label; ?></label>
-        <?= $this->partial('input@base'); ?>
-    </div>
-<?php endif; ?>
