@@ -25,7 +25,7 @@ A light-weight, template-oriented form builder.
         <input <?= $this->type->attr('text'); ?> <?= $this->attr(['id', 'name', 'value', 'placeholder']); ?> class="input input-large">
     </div>
     
-    // ./templates/submit-button.php
+    // ./templates/submit.php
     <div class="row">
         <button type="submit"><?= $this->label; ?></button>
     </div>
