@@ -1,4 +1,4 @@
-# Formular (WIP)
+# Formular
 
 A light-weight, template-oriented form builder.
 
@@ -164,7 +164,7 @@ The following forms/templates have been created so far:
 
 Other packages:
 
-* [Laravel integration](https://github.com/bigwhoop/formular-provider-laravel)
+* [Laravel Integration](https://github.com/bigwhoop/formular-provider-laravel)
 
 
 ## Bindings
@@ -189,7 +189,7 @@ For ...
 If you use the continue binding, ... 
 
     <div class="depth-<?= $this->depth; ?>">
-        <?= $this->next; ?>
+        <?= $this->next->val(); ?>
     </div>
     ...
     $form->addElement('template', ['depth' => 1, 'next' => $form->bindContinue(); ]);
@@ -205,6 +205,8 @@ If you use the continue binding, ...
             <div class="depth-3b"></div>
         </div>
     </div>
+
+**Make sure to call the `val()` and not `str()` on the bound value as otherwise you'd get escaped text.
 
 ### Error messages binding
 
@@ -223,11 +225,11 @@ validation chapter for more information on how to set up validators.
 
 Using the value binding you can pass a wrapped value into the template that gets unwrapped not until you access it.
 
-    <h1><?= $this->foo; ?></h1>
+    <h1><?= $this->name; ?></h1>
     ...
     $obj->setName('Tim');
     $form->addElement('template', [
-        'foo' => $form->bindValue([$obj, 'getName']),
+        'name' => $form->bindValue([$obj, 'getName']),
     ]);
     $obj->setName('John');
     $form->render();
@@ -240,7 +242,7 @@ Using `$form->bindVariable()` it's also possible to bind to a variable.
 
     $var = 'Tim';
     $form->addElement('text', [
-        'foo' => $form->bindVariable($var),
+        'name' => $form->bindVariable($var),
     ]);
     $var = 'James';
     $form->render(); // => <h1>James</h1>
@@ -248,8 +250,16 @@ Using `$form->bindVariable()` it's also possible to bind to a variable.
 
 ## Validation
 
-Adapters.
+The following adapters are available:
 
+* [Zend Validator (ZF2)](https://github.com/zendframework/Component_ZendValidator): `\bigwhoop\Formular\Validation\Adapter\ZendFrameworkAdapter`
+* [Respect Validation](https://github.com/Respect/Validation): `\bigwhoop\Formular\Validation\Adapter\RespectValidationAdapter`
+
+See the validators example for how to use them.
+
+## Filters
+
+*WIP*
 
 ## License
 
