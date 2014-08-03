@@ -1,6 +1,6 @@
 # Formular
 
-[![Build Status](https://secure.travis-ci.org/bigwhoop/Formular.png)](http://travis-ci.org/bigwhoop/Formular)
+[![Build Status](https://travis-ci.org/bigwhoop/formular.svg?branch=master)](https://travis-ci.org/bigwhoop/formular)
 
 A light-weight, template-oriented form builder.
 
