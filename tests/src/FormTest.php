@@ -104,11 +104,12 @@ class FormTest extends \PHPUnit_Framework_TestCase
     
     public function testValueBinding()
     {
+        $form = $this->createForm();
+        
         $user = new User('John', 'Doe');
         $age = 21;
         $location = 'Bern';
         
-        $form = $this->createForm();
         $form->addElement('values-printer', [
             'value1' => $form->bindValue([$user, 'getFirstName']),
             'value2' => $form->bindValue([$user, 'lastName']),
@@ -117,11 +118,12 @@ class FormTest extends \PHPUnit_Framework_TestCase
         ]);
         $this->assertSame('John-Doe-21-Bern', $form->render());
         
+        $form->resetRenderQueue();
+        
         $user->firstName = 'Jack';
         $user->lastName = 'Jones';
         $age = 34;
         $location = 'Thun';
-        $form->resetRenderQueue();
         $this->assertSame('Jack-Jones-34-Thun', $form->render());
     }
     
@@ -163,5 +165,15 @@ class FormTest extends \PHPUnit_Framework_TestCase
         }, "_%VALUE%_"));
         $this->assertFalse($form->isValid(['test' => 'foobar']));
         $this->assertEquals("Value: 'foobar'., _foobar_", $form->render());
+    }
+    
+    
+    public function testPartial()
+    {
+        $form = $this->createForm();
+        $form->addElement('partial-array-printer', [
+            'array' => ['foo', 3, 'bar'],
+        ]);
+        $this->assertEquals('foo, 3, bar', $form->render());
     }
 }
