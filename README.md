@@ -3,6 +3,11 @@
 A light-weight, template-oriented form builder.
 
 
+## Installation
+
+Use composer to install package `formular/formular`.
+
+
 ## Features
 
 * Build custom forms using re-usable templates (Bootstrap, ...).
