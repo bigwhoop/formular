@@ -8,6 +8,8 @@
  * file that was distributed with this source code.
  */
 namespace bigwhoop\Formular;
+use bigwhoop\Formular\Element\ElementInterface;
+use bigwhoop\Formular\Element\Element;
 use bigwhoop\Formular\Filter\CallbackFilter;
 use bigwhoop\Formular\Filter\FilterInterface;
 use bigwhoop\Formular\TemplateFactory\TemplateFactoryInterface;
@@ -25,7 +27,7 @@ class Form
     /** @var array */
     protected $options = [];
     
-    /** @var Element[] */
+    /** @var ElementInterface[] */
     private $elements = [];
     
     /** @var \SplQueue|null */
@@ -104,13 +106,13 @@ class Form
     
 
     /**
-     * @param Element|string $template
+     * @param ElementInterface|string $template
      * @param array $attributes
      * @return $this
      */
     public function addElement($template, array $attributes = [])
     {
-        if (!$template instanceof Element) {
+        if (!$template instanceof ElementInterface) {
             $template = new Element($template, $attributes);
         }
         $this->elements[] = $template;
@@ -120,17 +122,17 @@ class Form
 
     /**
      * @param string $id
-     * @return Element
+     * @return ElementInterface
      * @throws \OutOfBoundsException
      */
     public function getElementByID($id)
     {
         foreach ($this->elements as $element) {
-            if ($element->getAttribute('id') === $id) {
+            if ($element->getID() === $id) {
                 return $element;
             }
         }
-        throw new \OutOfBoundsException("No element with an attribute 'id' = '$id' exists.");
+        throw new \OutOfBoundsException("No element with ID '$id' exists.");
     }
 
 
@@ -141,7 +143,7 @@ class Form
      */
     public function getElementValueByID($id, $default = null)
     {
-        return $this->getElementByID($id)->getAttribute('value', $default);
+        return $this->getElementByID($id)->getValue($default);
     }
 
 
@@ -255,6 +257,9 @@ class Form
     
     
     /**
+     * Just call render() again to continue rendering of the form. All the elements
+     * are in a queue and we can just continue to dequeue the next element.
+     * 
      * @return callable
      */
     public function bindContinue()
@@ -308,36 +313,44 @@ class Form
 
 
     /**
-     * @param Element $element
+     * @param ElementInterface $element
      * @return string
      * @throws \LogicException
      */
-    public function renderElement(Element $element)
+    private function renderElement(ElementInterface $element)
     {
         $factory = $this->getTemplateFactory();
         if (!$factory) {
-            throw new \LogicException("A template factory must be set to render an element.");
+            throw new \LogicException("A template factory must be set to render elements.");
         }
-        $template = $factory->createTemplate($element->getTemplate());
+        $template = $factory->createTemplate($element->getTemplateName());
         return $template->render($element->getAttributes());
     }
 
 
     /**
+     * Validates all the elements against the defined validators.
+     * 
+     * During validation the given values will be set as the new values of the elements.
+     * 
      * @param array $values
      * @return bool
      */
     public function isValid(array $values)
     {
+        if (empty($this->elements) || empty($this->validators)) {
+            return true;
+        }
+        
         $errors = [];
         foreach ($this->elements as $element) {
-            $elementId = $element->getAttribute('id');
+            $elementId = $element->getID();
             if (empty($elementId)) {
                 continue;
             }
             
             $value = array_key_exists($elementId, $values) ? $values[$elementId] : null;
-            $element->setAttribute('value', $value);
+            $element->setValue($value);
             
             foreach ($this->validators as $scope => $validator) {
                 $elementIds = array_map('trim', explode(',', $scope));

@@ -7,48 +7,48 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace bigwhoop\Formular;
+namespace bigwhoop\Formular\Element;
 
 /**
  * @author Philippe Gerber <philippe@bigwhoop.ch>
  */
-class Element
+class Element implements ElementInterface
 {
     /** @var string */
-    private $template = '';
+    private $templateName = '';
     
     /** @var array */
     private $attributes = [];
 
 
     /**
-     * @param string $template
+     * @param string $templateName
      * @param array $attributes
      */
-    public function __construct($template, array $attributes = [])
+    public function __construct($templateName, array $attributes = [])
     {
-        $this->setTemplate($template);
+        $this->setTemplateName($templateName);
         $this->setAttributes($attributes);
     }
 
 
     /**
-     * @param string $template
+     * @param string $templateName
      * @return $this
      */
-    public function setTemplate($template)
+    public function setTemplateName($templateName)
     {
-        $this->template = $template;
+        $this->templateName = $templateName;
         return $this;
     }
 
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
-    public function getTemplate()
+    public function getTemplateName()
     {
-        return $this->template;
+        return $this->templateName;
     }
 
 
@@ -93,7 +93,7 @@ class Element
     
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getAttributes()
     {
@@ -112,5 +112,33 @@ class Element
             return $this->attributes[$key];
         }
         return $defaultValue;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getID()
+    {
+        return $this->getAttribute('id');
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setValue($value)
+    {
+        $this->setAttribute('value', $value);
+        return $this;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getValue()
+    {
+        return $this->getAttribute('value');
     }
 }

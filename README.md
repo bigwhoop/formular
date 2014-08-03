@@ -12,27 +12,30 @@ Use composer to install package `formular/formular`.
 
 ## Features
 
-* Build custom forms using re-usable templates (Bootstrap, ...).
-* Write PHP templates. No need to learn a new syntax.
+* Build custom forms writing re-usable templates/view scripts.
+* Re-use existing templates with support for front-end frameworks like Bootstrap.
+* Write PHP, no need to learn a new syntax.
 * Non-intrusive filtering and validation support. Take your 3rd party library and plug it in using the available adapters.
-* Fully tested. 
+* Light-weight, extensible and unit tested.
 
 
 ## Terminology
 
 * **Template**: A view script written in PHP and HTML.
-* **Template Value**: A value inside a template, most likely coming from an element definition.
+* **Template Value**: A value inside a template. Most likely coming from an element definition.
 * **Element**: A part of the form that is rendered using a specific template.
 
 
 ## A simple example
 
-    // ./templates/input.php
+Consider the following:
+
+    // ./templates/input.phtml
     <div class="row">
-        <input <?= $this->type->attr('text'); ?> <?= $this->attr(['id', 'name', 'value', 'placeholder']); ?> class="input input-large">
+        <input <?= $this->type->attr('text'); ?> <?= $this->attr(['id', 'name', 'value', 'placeholder']); ?>>
     </div>
     
-    // ./templates/submit.php
+    // ./templates/submit.phtml
     <div class="row">
         <button type="submit"><?= $this->label; ?></button>
     </div>
@@ -42,7 +45,7 @@ Use composer to install package `formular/formular`.
     use bigwhoop\Formular\TemplateFactory\FileBasedFactory;
     
     $templateFactory = new FileBasedFactory();
-    $templateFactory->addTemplatesPath(__DIR__ . '/templates');
+    $templateFactory->addTemplatesPath(__DIR__ . '/../templates');
     
     $form = new Form();
     $form->setTemplatesFactory($templateFactory);
@@ -51,13 +54,13 @@ Use composer to install package `formular/formular`.
     $form->addElement('submit', ['label' => 'Register']);
     echo $form->render();
     
-Which outputs the following:
+This will output ...
     
     <div class="row">
-        <input type="text" id="name" name="name" placeholder="Your name" class="input input-large">
+        <input type="text" id="name" name="name" placeholder="Your name">
     </div>
     <div class="row">
-        <input type="email" id="email" name="email" placeholder="Your email address" class="input input-large">
+        <input type="email" id="email" name="email" placeholder="Your email address">
     </div>
     <div class="row">
         <button type="submit">Register</button>
@@ -65,7 +68,7 @@ Which outputs the following:
 
 So what is happening here?
 
-First we create some `.php` files in a directory. This templates directory we then register with the form using a new
+First we create some `.phtml` files in a directory. This templates directory we then register with the form using a new
 `FileBasedFactory`. The name of the files minus the extension are used as the template's name. Next we define some
 elements using the available templates. When rendering the specified element, its attributes will get passed on to the
 templates.
@@ -83,15 +86,15 @@ Here are the conventions you need to know.
 ## Templates
 
 Templates are provided by template factories. The easiest factory is a the file-based `FileBasedFactory`; as seen
-in the first example. There templates are `.php` files laying around in directories. You can add as many such
+in the first example. There templates are `.phtml` files laying around in directories. You can add as many such
 directories to your form as you wish.
 
 ### Template namespaces
 
 Let's have a look at the following example:
 
-    // ./templates1/input.php
-    // ./templates2/input.php
+    // ./templates1/input.phtml
+    // ./templates2/input.phtml
     ...
     $templateFactory->addTemplatesPath('./templates1');
     $templateFactory->addTemplatesPath('./templates2');
