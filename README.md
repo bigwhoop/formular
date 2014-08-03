@@ -1,5 +1,7 @@
 # Formular
 
+[![Build Status](https://secure.travis-ci.org/bigwhoop/Formular.png)](http://travis-ci.org/bigwhoop/Formular)
+
 A light-weight, template-oriented form builder.
 
 
