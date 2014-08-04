@@ -33,9 +33,10 @@ interface ElementInterface
 
 
     /**
+     * @param mixed $defaultValue
      * @return mixed
      */
-    public function getValue();
+    public function getValue($defaultValue = null);
 
 
     /**

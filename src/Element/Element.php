@@ -137,8 +137,8 @@ class Element implements ElementInterface
     /**
      * {@inheritdoc}
      */
-    public function getValue()
+    public function getValue($defaultValue = null)
     {
-        return $this->getAttribute('value');
+        return $this->getAttribute('value', $defaultValue);
     }
 }
