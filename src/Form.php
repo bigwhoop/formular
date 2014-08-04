@@ -212,7 +212,7 @@ class Form
             throw new \InvalidArgumentException("Validator must be a callable or an instance of ValidatorInterface.");
         }
         if (!$validator instanceof ValidatorInterface) {
-            $validator = new CallbackValidator($validator);
+            $validator = new CallbackValidator($validator, 'Value %VALUE% is not valid.');
         }
         $this->validators[$scope] = $validator;
         return $this;
