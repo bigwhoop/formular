@@ -9,8 +9,9 @@
  */
 namespace bigwhoop\Formular\Template;
 
+use bigwhoop\Formular\Filtering\ZendEscaperAdapter;
 use bigwhoop\Formular\TemplateFactory\TemplateFactoryInterface;
-use Zend\Escaper\Escaper;
+use bigwhoop\Formular\Filtering\EscaperInterface;
 
 /**
  * @author Philippe Gerber <philippe@bigwhoop.ch>
@@ -23,7 +24,7 @@ abstract class AbstractTemplate
     /** @var TemplateFactoryInterface|null */
     private $templateFactory = null;
     
-    /** @var Escaper|null */
+    /** @var EscaperInterface|null */
     private $escaper = null;
 
 
@@ -50,22 +51,22 @@ abstract class AbstractTemplate
 
 
     /**
-     * @return Escaper
+     * @return EscaperInterface
      */
     public function getEscaper()
     {
         if (!$this->escaper) {
-            $this->escaper = new Escaper();
+            $this->escaper = new ZendEscaperAdapter();
         }
         return $this->escaper;
     }
 
 
     /**
-     * @param Escaper $escaper
+     * @param EscaperInterface $escaper
      * @return $this
      */
-    public function setEscaper(Escaper $escaper)
+    public function setEscaper(EscaperInterface $escaper)
     {
         $this->escaper = $escaper;
         return $this;
@@ -95,7 +96,7 @@ abstract class AbstractTemplate
      * @param array|string $keys
      * @return string
      */
-    protected function attr($keys = [])
+    public function attr($keys = [])
     {
         if (!is_array($keys)) {
             $keys = [$keys];
@@ -118,7 +119,7 @@ abstract class AbstractTemplate
      * @param array|string $keys
      * @return string
      */
-    protected function prop($keys = [])
+    public function prop($keys = [])
     {
         if (!is_array($keys)) {
             $keys = [$keys];
@@ -140,7 +141,7 @@ abstract class AbstractTemplate
      * @return string
      * @throws \RuntimeException
      */
-    protected function partial($templateName)
+    public function partial($templateName)
     {
         if (!$this->templateFactory) {
             throw new \RuntimeException("Template factory must be set to render partials.");

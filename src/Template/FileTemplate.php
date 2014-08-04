@@ -35,7 +35,7 @@ class FileTemplate extends AbstractTemplate
     /**
      * {@inheritdoc}
      */
-    public function renderTemplate()
+    protected function renderTemplate()
     {
         ob_start();
         require $this->path;

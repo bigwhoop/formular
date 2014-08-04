@@ -9,6 +9,7 @@
  */
 namespace bigwhoop\Formular\Template;
 
+use bigwhoop\Formular\Filtering\EscaperInterface;
 use Zend\Escaper\Escaper;
 
 /**
@@ -22,7 +23,7 @@ class Value
     /** @var mixed */
     private $value = null;
     
-    /** @var Escaper|null */
+    /** @var EscaperInterface|null */
     private $escaper = null;
 
 
@@ -38,13 +39,22 @@ class Value
 
 
     /**
-     * @param Escaper $escaper
+     * @param EscaperInterface $escaper
      * @return $this
      */
-    public function setEscaper(Escaper $escaper)
+    public function setEscaper(EscaperInterface $escaper)
     {
         $this->escaper = $escaper;
         return $this;
+    }
+
+
+    /**
+     * @return EscaperInterface|null
+     */
+    public function getEscaper()
+    {
+        return $this->escaper;
     }
     
     
@@ -92,34 +102,6 @@ class Value
         $val = $this->str($default, false);
         return $escape && $this->escaper ? $this->escaper->escapeHtmlAttr($val) : $val;
     }
-
-
-    /**
-     * Returns val() as an escaped string that can be used inside HTML element style attributes.
-     * 
-     * @param mixed $default
-     * @param bool $escape
-     * @return string
-     */
-    public function attrValCSS($default = null, $escape = true)
-    {
-        $val = $this->str($default, false);
-        return $escape && $this->escaper ? $this->escaper->escapeCss($val) : $val;
-    }
-
-
-    /**
-     * Returns val() as an escaped string that can be used inside HTML element JS event attributes.
-     * 
-     * @param mixed $default
-     * @param bool $escape
-     * @return string
-     */
-    public function attrValJS($default = null, $escape = true)
-    {
-        $val = $this->str($default, false);
-        return $escape && $this->escaper ? $this->escaper->escapeJs($val) : $val;
-    }
     
 
     /**
@@ -130,21 +112,6 @@ class Value
     public function attr($default = null, $key = null)
     {
         $value = $this->attrVal($default);
-        if (empty($value)) {
-            return '';
-        }
-        return sprintf('%s="%s"', $key === null ? $this->key : $key, $value);
-    }
-    
-
-    /**
-     * @param mixed $default
-     * @param string|null $key
-     * @return string
-     */
-    public function cssAttr($default = null, $key = null)
-    {
-        $value = $this->attrValCSS($default);
         if (empty($value)) {
             return '';
         }

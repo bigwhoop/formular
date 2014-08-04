@@ -30,7 +30,7 @@ class CallbackTemplate extends AbstractTemplate
     /**
      * {@inheritdoc}
      */
-    public function renderTemplate()
+    protected function renderTemplate()
     {
         return call_user_func($this->callback, $this);
     }

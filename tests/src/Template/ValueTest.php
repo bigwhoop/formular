@@ -1,9 +1,26 @@
 <?php
 namespace Test\Formular\Template;
+use bigwhoop\Formular\Filtering\ZendEscaperAdapter;
 use bigwhoop\Formular\Template\Value;
 
 class ValueTest extends \PHPUnit_Framework_TestCase
 {
+    public function testGetEscaper()
+    {
+        $value = new Value('id');
+        $this->assertSame(null, $value->getEscaper());
+    }
+    
+    
+    public function testSetEscaper()
+    {
+        $value = new Value('id');
+        $escaper = new ZendEscaperAdapter();
+        $value->setEscaper($escaper);
+        $this->assertSame($escaper, $value->getEscaper());
+    }
+    
+    
     public function testEmptyValue()
     {
         $value = new Value('id');

@@ -1,7 +1,7 @@
 <?php
 namespace Test\Formular\Validation;
 
-use bigwhoop\Formular\Filter\CallbackFilter;
+use bigwhoop\Formular\Filtering\CallbackFilter;
 
 class CallbackFilterTest extends \PHPUnit_Framework_TestCase
 {

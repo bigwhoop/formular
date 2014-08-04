@@ -10,8 +10,8 @@
 namespace bigwhoop\Formular;
 use bigwhoop\Formular\Element\ElementInterface;
 use bigwhoop\Formular\Element\Element;
-use bigwhoop\Formular\Filter\CallbackFilter;
-use bigwhoop\Formular\Filter\FilterInterface;
+use bigwhoop\Formular\Filtering\CallbackFilter;
+use bigwhoop\Formular\Filtering\FilterInterface;
 use bigwhoop\Formular\TemplateFactory\TemplateFactoryInterface;
 use bigwhoop\Formular\Validation\CallbackValidator;
 use bigwhoop\Formular\Validation\ValidatorInterface;
