@@ -1,6 +1,7 @@
 <?php
 namespace Test\Formular;
 use bigwhoop\Formular\Element\Element;
+use bigwhoop\Formular\Filtering\CallbackFilter;
 use bigwhoop\Formular\TemplateFactory\FileBasedFactory;
 use bigwhoop\Formular\Validation\CallbackValidator;
 use MyProject\Proxies\__CG__\stdClass;
@@ -21,6 +22,23 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $form->setTemplateFactory($templates);
         
         return $form;
+    }
+    
+    
+    public function testDefaultOptions()
+    {
+        Form::setDefaultOptions([]);
+        $form = new Form();
+        $this->assertSame([], $this->readAttribute($form, 'options'));
+        
+        Form::setDefaultOptions(['a' => 'b', 'c' => 12]);
+        $form = new Form();
+        $this->assertSame(['a' => 'b', 'c' => 12], $this->readAttribute($form, 'options'));
+        
+        $form = new Form(['c' => 'd']);
+        $this->assertSame(['c' => 'd', 'a' => 'b'], $this->readAttribute($form, 'options'));
+        
+        Form::setDefaultOptions([]);
     }
     
 
@@ -180,8 +198,9 @@ class FormTest extends \PHPUnit_Framework_TestCase
             'value2' => $form->bindValue([$user, 'lastName']),
             'value3' => $form->bindValue(function() use (&$age) { return $age; }),
             'value4' => $form->bindVariable($location),
+            'value5' => $form->bindValue('Earth'),
         ]);
-        $this->assertSame('John-Doe-21-Bern', $form->render());
+        $this->assertSame('John-Doe-21-Bern-Earth', $form->render());
         
         $form->resetRenderQueue();
         
@@ -189,7 +208,7 @@ class FormTest extends \PHPUnit_Framework_TestCase
         $user->lastName = 'Jones';
         $age = 34;
         $location = 'Thun';
-        $this->assertSame('Jack-Jones-34-Thun', $form->render());
+        $this->assertSame('Jack-Jones-34-Thun-Earth', $form->render());
     }
     
     
@@ -240,5 +259,128 @@ class FormTest extends \PHPUnit_Framework_TestCase
             'array' => ['foo', 3, 'bar'],
         ]);
         $this->assertEquals('foo, 3, bar', $form->render());
+    }
+    
+    
+    public function testValidation()
+    {
+        $form = $this->createForm();
+        $form->addElement('template', ['id' => 'foo']);
+        $form->setValidator('foo', new CallbackValidator(function($value) {
+            return $value === 'bar';
+        }, "'%VALUE%' is not 'bar'"));
+        
+        $this->assertFalse($form->isValid(['foo' => 'baz']));
+        $this->assertSame(["'baz' is not 'bar'"], $form->getErrorMessages());
+        $this->assertTrue($form->isValid(['foo' => 'bar']));
+    }
+    
+    
+    public function testMatchAllValidation()
+    {
+        $form = $this->createForm();
+        $form->addElement('template', ['id' => 'foo']);
+        $form->setValidators([
+            '*' => function($value) {
+                return $value === 'bar';
+            },
+        ]);
+        
+        $this->assertFalse($form->isValid(['foo' => 'baz']));
+        $this->assertSame(["Value baz is not valid."], $form->getErrorMessages());
+        $this->assertTrue($form->isValid(['foo' => 'bar']));
+    }
+
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Scope must be string.
+     */
+    public function testSetValidatorWithInvalidScope()
+    {
+        $form = $this->createForm();
+        $form->setValidator(12, function() {});
+    }
+
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Validator must be a callable or an instance of ValidatorInterface.
+     */
+    public function testSetValidatorWithInvalidValidator()
+    {
+        $form = $this->createForm();
+        $form->setValidator('*', 'foo');
+    }
+    
+    
+    public function testFiltering()
+    {
+        $form = $this->createForm();
+        $form->setFilters([
+            'foo' => function($value) {
+                return str_replace('foo', 'bar', $value);
+            },
+        ]);
+        $form->setFilter('*', new CallbackFilter(function($value) {
+            return $value . '_';
+        }));
+        
+        $filterMethod = $this->getAccessibleMethod(get_class($form), 'filterElement');
+        
+        $e = new Element('template', ['id' => 'aaa', 'value' => 'foobar']);
+        $filterMethod->invoke($form, $e);
+        $this->assertSame('foobar_', $e->getValue());
+        
+        $e = new Element('template', ['id' => 'foo', 'value' => 'foobar']);
+        $filterMethod->invoke($form, $e);
+        $this->assertSame('barbar_', $e->getValue());
+    }
+
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Scope must be string.
+     */
+    public function testSetFilterWithInvalidScope()
+    {
+        $form = $this->createForm();
+        $form->setFilter(12, new CallbackFilter(function() {}));
+    }
+
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Filter must be a callable or an instance of FilterInterface.
+     */
+    public function testSetFilterWithInvalidFilter()
+    {
+        $form = $this->createForm();
+        $form->setFilter('*', 'foo');
+    }
+
+
+    /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage A template factory must be set to render elements.
+     */
+    public function testRenderWithoutTemplatesFactory()
+    {
+        $form = new Form();
+        $form->addElement('template');
+        $form->render();
+    }
+    
+
+    /**
+     * @param string $class
+     * @param string $method
+     * @return \ReflectionMethod
+     */
+    private function getAccessibleMethod($class, $method)
+    {
+        $method = new \ReflectionMethod($class, $method);
+        $method->setAccessible(true);
+        return $method;
     }
 }

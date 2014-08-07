@@ -165,7 +165,7 @@ class Form
             throw new \InvalidArgumentException("Scope must be string.");
         }
         if (!is_callable($filter) && !$filter instanceof FilterInterface) {
-            throw new \InvalidArgumentException("Validator must be a callable or an instance of FilterInterface.");
+            throw new \InvalidArgumentException("Filter must be a callable or an instance of FilterInterface.");
         }
         if (!$filter instanceof FilterInterface) {
             $filter = new CallbackFilter($filter);
