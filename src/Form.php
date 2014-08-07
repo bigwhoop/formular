@@ -8,8 +8,10 @@
  * file that was distributed with this source code.
  */
 namespace bigwhoop\Formular;
+use bigwhoop\Formular\Element\ElementCollection;
 use bigwhoop\Formular\Element\ElementInterface;
 use bigwhoop\Formular\Element\Element;
+use bigwhoop\Formular\Element\ElementQueue;
 use bigwhoop\Formular\Filtering\CallbackFilter;
 use bigwhoop\Formular\Filtering\FilterInterface;
 use bigwhoop\Formular\TemplateFactory\TemplateFactoryInterface;
@@ -27,10 +29,10 @@ class Form
     /** @var array */
     protected $options = [];
     
-    /** @var ElementInterface[] */
-    private $elements = [];
+    /** @var ElementCollection */
+    private $elements = null;
     
-    /** @var \SplQueue|null */
+    /** @var ElementQueue|null */
     private $renderQueue = null;
     
     /** @var TemplateFactoryInterface|null */
@@ -61,6 +63,7 @@ class Form
     public function __construct(array $options = [])
     {
         $this->options = $options + static::$defaultOptions;
+        $this->elements = new ElementCollection();
         $this->init();
     }
 
@@ -99,7 +102,7 @@ class Form
      */
     public function clearElements()
     {
-        $this->elements = [];
+        $this->elements->reset();
         $this->resetRenderQueue();
         return $this;
     }
@@ -115,24 +118,8 @@ class Form
         if (!$template instanceof ElementInterface) {
             $template = new Element($template, $attributes);
         }
-        $this->elements[] = $template;
+        $this->elements->addElement($template);
         return $this;
-    }
-
-
-    /**
-     * @param string $id
-     * @return ElementInterface
-     * @throws \OutOfBoundsException
-     */
-    public function getElementByID($id)
-    {
-        foreach ($this->elements as $element) {
-            if ($element->getID() === $id) {
-                return $element;
-            }
-        }
-        throw new \OutOfBoundsException("No element with ID '$id' exists.");
     }
 
 
@@ -140,10 +127,15 @@ class Form
      * @param string $id
      * @param mixed $default
      * @return mixed
+     * @throws \OutOfBoundsException        If the element does not exist.
      */
     public function getElementValueByID($id, $default = null)
     {
-        return $this->getElementByID($id)->getValue($default);
+        try {
+            return $this->elements->getElementByID($id)->getValue($default);
+        } catch (\OutOfBoundsException $e) {
+            throw $e;
+        }
     }
 
 
@@ -297,10 +289,7 @@ class Form
     public function render()
     {
         if ($this->renderQueue === null) {
-            $this->renderQueue = new \SplQueue();
-            foreach ($this->elements as $element) {
-                $this->renderQueue->enqueue($element);
-            }
+            $this->renderQueue = ElementQueue::createFromCollection($this->elements);
         }
         
         $out = '';
@@ -338,12 +327,14 @@ class Form
      */
     public function isValid(array $values)
     {
-        if (empty($this->elements) || empty($this->validators)) {
+        $elements = $this->elements->getElements();
+        
+        if (empty($elements) || empty($this->validators)) {
             return true;
         }
         
         $errors = [];
-        foreach ($this->elements as $element) {
+        foreach ($elements as $element) {
             $elementId = $element->getID();
             if (empty($elementId)) {
                 continue;

@@ -1,7 +1,9 @@
 <?php
 namespace Test\Formular;
+use bigwhoop\Formular\Element\Element;
 use bigwhoop\Formular\TemplateFactory\FileBasedFactory;
 use bigwhoop\Formular\Validation\CallbackValidator;
+use MyProject\Proxies\__CG__\stdClass;
 use Test\Models\User;
 use bigwhoop\Formular\Form;
 
@@ -20,7 +22,70 @@ class FormTest extends \PHPUnit_Framework_TestCase
         
         return $form;
     }
+    
 
+    public function testGetSpecificElementValue()
+    {
+        $obj = new \stdClass();
+        $obj->a = 'b';
+        
+        $form = $this->createForm();
+        $form->addElement(new Element('foo', ['id' => 'str', 'value' => 'string']));
+        $form->addElement(new Element('foo', ['id' => 'int', 'value' => 873]));
+        $form->addElement(new Element('foo', ['id' => 'float', 'value' => 12.1443]));
+        $form->addElement(new Element('foo', ['id' => 'obj', 'value' => $obj]));
+        $form->addElement(new Element('foo', ['id' => 'arr', 'value' => ['a', 'b', 'c']]));
+        $this->assertSame('string', $form->getElementValueByID('str'));
+        $this->assertSame(873, $form->getElementValueByID('int'));
+        $this->assertSame(12.1443, $form->getElementValueByID('float'));
+        $this->assertSame($obj, $form->getElementValueByID('obj'));
+        $this->assertSame(['a', 'b', 'c'], $form->getElementValueByID('arr'));
+    }
+    
+
+    /**
+     * @expectedException \OutOfBoundsException
+     * @expectedExceptionMessage No element with ID 'bar' exists.
+     */
+    public function testGetSpecificNonExistingElementValue()
+    {
+        $form = $this->createForm();
+        $form->addElement(new Element('foo', ['id' => 'bla']));
+        $form->getElementValueByID('bar');
+    }
+    
+
+    public function testGetSpecificElementDefaultValue()
+    {
+        $form = $this->createForm();
+        $form->addElement(new Element('foo', ['id' => 'bla']));
+        $this->assertSame(null, $form->getElementValueByID('bla'));
+        $this->assertSame('my default value', $form->getElementValueByID('bla', 'my default value'));
+    }
+    
+    
+    public function testAddElements()
+    {
+        $form = $this->createForm();
+        $this->assertCount(0, $this->readAttribute($form, 'elements')->getElements());
+        $form->addElement('dirname');
+        $this->assertCount(1, $this->readAttribute($form, 'elements')->getElements());
+        $form->addElement('dirname');
+        $this->assertCount(2, $this->readAttribute($form, 'elements')->getElements());
+        return $form;
+    }
+    
+
+    /**
+     * @param Form $form
+     * @depends testAddElements
+     */
+    public function testClearElements(Form $form)
+    {
+        $form->clearElements();
+        $this->assertCount(0, $this->readAttribute($form, 'elements')->getElements());
+    }
+    
 
     /**
      * @expectedException \OverflowException
