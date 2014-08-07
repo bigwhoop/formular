@@ -147,19 +147,19 @@ class Form
     {
         $this->filters = [];
         foreach ($filters as $scope => $filter) {
-            $this->addFilter($scope, $filter);
+            $this->setFilter($scope, $filter);
         }
         return $this;
     }
 
 
     /**
-     * @param $scope
+     * @param string $scope
      * @param callable|FilterInterface $filter
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function addFilter($scope, $filter)
+    public function setFilter($scope, $filter)
     {
         if (!is_string($scope)) {
             throw new \InvalidArgumentException("Scope must be string.");
@@ -190,7 +190,7 @@ class Form
 
 
     /**
-     * @param $scope
+     * @param string $scope
      * @param callable|ValidatorInterface $validator
      * @return $this
      * @throws \InvalidArgumentException
@@ -327,36 +327,59 @@ class Form
      */
     public function isValid(array $values)
     {
-        $elements = $this->elements->getElements();
+        $this->errorMessages = [];
         
-        if (empty($elements) || empty($this->validators)) {
-            return true;
-        }
-        
-        $errors = [];
-        foreach ($elements as $element) {
+        foreach ($this->elements->getElements() as $element) {
             $elementId = $element->getID();
             if (empty($elementId)) {
                 continue;
             }
             
-            $value = array_key_exists($elementId, $values) ? $values[$elementId] : null;
+            $value = null;
+            if (array_key_exists($elementId, $values)) {
+                $value = $values[$elementId];
+            }
             $element->setValue($value);
             
-            foreach ($this->validators as $scope => $validator) {
-                $elementIds = array_map('trim', explode(',', $scope));
-                
-                if ($scope === '*' || in_array($elementId, $elementIds)) {
-                    if (!$validator->isValid($value)) {
-                        $errors[] = $validator->getErrorMessage();
-                    }
+            $this->filterElement($element);
+            $this->validateElement($element);
+        }
+        
+        return count($this->errorMessages) === 0;
+    }
+
+
+    /**
+     * Applies all defined filters to an element's value
+     * 
+     * @param ElementInterface $element
+     */
+    private function filterElement(ElementInterface $element)
+    {
+        $value = $element->getValue();
+        foreach ($this->filters as $scope => $filter) {
+            $elementIds = array_map('trim', explode(',', $scope));
+            if ($scope === '*' || in_array($element->getID(), $elementIds)) {
+                $value = $filter->filter($value);
+            }
+        }
+        $element->setValue($value);
+    }
+
+
+    /**
+     * @param ElementInterface $element
+     */
+    private function validateElement(ElementInterface $element)
+    {
+        foreach ($this->validators as $scope => $validator) {
+            $elementIds = array_map('trim', explode(',', $scope));
+            if ($scope === '*' || in_array($element->getID(), $elementIds)) {
+                if (!$validator->isValid($element->getValue())) {
+                    $this->errorMessages[] = $validator->getErrorMessage();
                 }
             }
         }
-        
-        $this->errorMessages = $errors;
-        
-        return count($errors) === 0;
     }
 
 
